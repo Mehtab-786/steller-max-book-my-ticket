@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ODYSSEY — Premier IMAX Seat Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@400;500;600;700&family=Syne:wght@700;800&display=swap");
+
+    body {
+      font-family: "Outfit", sans-serif;
+      background-color: #030712;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    .font-cinzel {
+      font-family: "Cinzel", serif;
+    }
+
+    .font-syne {
+      font-family: "Syne", sans-serif;
+    }
+
+    /* Screen Curve & Projection Glow */
+    .screen-glow {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.4) 0%, rgba(129, 140, 248, 0.1) 60%, transparent 100%);
+      box-shadow: 0 -15px 50px rgba(56, 189, 248, 0.35);
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+
+    /* Ambient background grid */
+    .bg-grid-pattern {
+      background-size: 40px 40px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-grid-pattern bg-slate-950 relative selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- Ambient Light Orbs -->
+  <div class="fixed top-1/4 -left-32 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed bottom-1/4 -right-32 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none">
+  </div>
+
+  <!-- Main Container -->
+  <div
+    class="max-w-7xl w-full bg-slate-900/60 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.7)] p-6 sm:p-12 border border-slate-800/80 relative z-10 overflow-hidden">
+
+    <!-- Top Bar: User Profile & Authentication -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/60">
+
+      <!-- Brand Logo / Badge -->
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+              d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+          </svg>
+        </div>
+        <div>
+          <span class="font-syne font-extrabold tracking-wider text-lg text-white uppercase">Stellar IMAX</span>
+          <span class="block text-xs text-cyan-400/80 tracking-widest uppercase font-semibold">Screen 01 • Laser
+            4K</span>
+        </div>
+      </div>
+
+      <!-- User Profile Badge -->
+      <div class="flex items-center gap-3 bg-slate-950/70 border border-slate-800/90 rounded-2xl px-4 py-2 shadow-xl">
+        <img id="profileAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Profile"
+          class="w-10 h-10 rounded-full border-2 border-cyan-500/40 bg-slate-900 object-cover" />
+        <div class="pr-2">
+          <div class="text-xl font-bold text-slate-100 leading-tight" id="profileName">Guest</div>
+          <div class="text-xs text-slate-400" id="profileStatus">Not logged in</div>
+        </div>
+        <div id="authActionBtnContainer" class="border-l border-slate-800 pl-3">
+          <button id="authActionBtn" onclick="showAuthModal()"
+            class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs tracking-wide uppercase transition-all shadow-lg shadow-cyan-500/20 active:scale-95">
+            Sign In
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Movie Title Header -->
+    <div class="text-center mb-12 relative">
+      <div
+        class="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-4">
+        Now Showing • Sci-Fi Epic
+      </div>
+      <h1
+        class="font-cinzel text-5xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 tracking-tight mb-3 drop-shadow-sm">
+        ODYSSEY
+      </h1>
+      <p class="text-slate-400 text-base sm:text-xl max-w-2xl mx-auto font-light tracking-wide">
+        A Cinematic Journey Beyond the Horizon of Time & Stars
+      </p>
+    </div>
+
+    <!-- Seat Status Legend -->
+    <div class="flex justify-center mb-10">
+      <div
+        class="bg-slate-950/60 rounded-2xl px-8 py-3.5 border border-slate-800 flex gap-10 items-center shadow-inner">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-4 h-4 rounded-md bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.7)] border border-emerald-300">
+          </div>
+          <span class="text-slate-200 font-semibold text-sm tracking-wide">Available</span>
+        </div>
+        <div class="w-px h-6 bg-slate-800"></div>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-4 h-4 rounded-md bg-slate-900 border border-rose-500/40 text-rose-500/40 flex items-center justify-center text-[10px]">
+            ✕</div>
+          <span class="text-slate-400 font-semibold text-sm tracking-wide">Reserved</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEATS CONTAINER WITH IMAX SCREEN & SEATS COUNTER -->
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Separated Seats Left Counter Banner -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-2">
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+          <span class="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-widest">Live Theater
+            Availability</span>
+        </div>
+        <div
+          class="bg-slate-950/80 border border-emerald-500/30 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-xl">
+          <span
+            class="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400"
+            id="seatsCount">0</span>
+          <span class="text-sm sm:text-base font-bold text-emerald-300 uppercase tracking-wider">Seats Left</span>
+        </div>
+      </div>
+
+      <!-- IMAX SCREEN VISUAL CANVAS -->
+      <div class="mb-10 text-center relative pt-4">
+        <div class="w-full h-8 screen-glow border-t-4 border-cyan-400/80 mb-2"></div>
+        <span class="text-xs uppercase tracking-[0.3em] font-bold text-cyan-400/70">IMAX Laser Projection Screen</span>
+      </div>
+
+      <!-- Seats Table Container -->
+      <div class="bg-slate-950/70 p-6 sm:p-10 rounded-3xl border border-slate-800/80 shadow-2xl overflow-x-auto">
+        <table id="tbl" class="border-separate border-spacing-3 sm:border-spacing-4 mx-auto"></table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUTH POP-UP MODAL OVERLAY -->
+  <div id="authModal"
+    class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 items-center justify-center hidden p-4">
+    <div id="authModalBox"
+      class="bg-slate-900 border border-slate-800 rounded-3xl p-8 w-full max-w-md shadow-2xl relative">
+
+      <!-- Close Button (✕) -->
+      <button onclick="hideAuthModal()"
+        class="absolute top-5 right-5 text-slate-400 hover:text-white transition text-2xl leading-none">&times;</button>
+
+      <!-- LOGIN VIEW -->
+      <div id="loginView">
+        <h2
+          class="font-cinzel text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 mb-1">
+          Welcome Back
+        </h2>
+        <p class="text-slate-400 text-sm mb-6">Sign in to confirm your seat reservation</p>
+
+        <!-- Inline Error Box -->
+        <div id="loginError"
+          class="hidden mb-4 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-medium">
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1.5 font-semibold">Email
+              Address</label>
+            <input type="email" id="loginEmail" required placeholder="you@example.com"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1.5 font-semibold">Password</label>
+            <input type="password" id="loginPassword" required placeholder="••••••••"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition" />
+          </div>
+          <button type="submit"
+            class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.98] uppercase text-xs tracking-wider">
+            Sign In & Book
+          </button>
+        </form>
+
+        <p class="text-center text-slate-400 text-sm mt-6">
+          Don't have an account?
+          <button onclick="switchToRegister()"
+            class="text-cyan-400 hover:text-cyan-300 font-semibold transition underline underline-offset-4">Register
+            here</button>
+        </p>
+      </div>
+
+      <!-- REGISTER VIEW (hidden by default) -->
+      <div id="registerView" class="hidden">
+        <h2
+          class="font-cinzel text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-1">
+          Create Account
+        </h2>
+        <p class="text-slate-400 text-sm mb-6">Register to start booking IMAX seats</p>
+
+        <!-- Inline Error Box -->
+        <div id="registerError"
+          class="hidden mb-4 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-medium">
+        </div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1.5 font-semibold">Username</label>
+            <input type="text" id="regUsername" required placeholder="johndoe"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1.5 font-semibold">Email
+              Address</label>
+            <input type="email" id="regEmail" required placeholder="you@example.com"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1.5 font-semibold">Password</label>
+            <input type="password" id="regPassword" required placeholder="••••••••"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+          <button type="submit"
+            class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] uppercase text-xs tracking-wider">
+            Create Account & Book
+          </button>
+        </form>
+
+        <p class="text-center text-slate-400 text-sm mt-6">
+          Already have an account?
+          <button onclick="switchToLogin()"
+            class="text-indigo-400 hover:text-indigo-300 font-semibold transition underline underline-offset-4">Login
+            here</button>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    function updateProfileUI() {
+      const profileNameEl = document.getElementById("profileName");
+      const profileStatusEl = document.getElementById("profileStatus");
+      const profileAvatarEl = document.getElementById("profileAvatar");
+      const btnContainer = document.getElementById("authActionBtnContainer");
+
+      if (activeUser && activeUser.username) {
+        profileNameEl.textContent = activeUser.username;
+        profileStatusEl.textContent = "Verified Member";
+        profileAvatarEl.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(activeUser.username)}`;
+        btnContainer.innerHTML = `
+          <button onclick="handleLogout()" class="bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-400 font-bold px-3.5 py-1.5 rounded-xl text-xs transition-all shadow-md">
+            Logout
+          </button>
+        `;
+      } else {
+        profileNameEl.textContent = "Guest";
+        profileStatusEl.textContent = "Not logged in";
+        profileAvatarEl.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
+        btnContainer.innerHTML = `
+          <button onclick="showAuthModal()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-xl text-xs transition-all shadow-md">
+            Sign In
+          </button>
+        `;
+      }
+    }
+
+    function showAuthModal() {
+      const modal = document.getElementById("authModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      switchToLogin();
+    }
+
+    function hideAuthModal() {
+      const modal = document.getElementById("authModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.getElementById("loginForm").reset();
+      document.getElementById("registerForm").reset();
+      document.getElementById("loginError").classList.add("hidden");
+      document.getElementById("registerError").classList.add("hidden");
+    }
+
+    function switchToRegister() {
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("registerView").classList.remove("hidden");
+      document.getElementById("loginError").classList.add("hidden");
+      document.getElementById("registerError").classList.add("hidden");
+    }
+
+    function switchToLogin() {
+      document.getElementById("registerView").classList.add("hidden");
+      document.getElementById("loginView").classList.remove("hidden");
+      document.getElementById("loginError").classList.add("hidden");
+      document.getElementById("registerError").classList.add("hidden");
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const errorBox = document.getElementById("loginError");
+
+      try {
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error || data.success === false) {
+          errorBox.textContent = data.message || data.error || "Login failed. Check your credentials.";
+          errorBox.classList.remove("hidden");
+          return;
+        }
+
+        activeUser = data.data || { username: email.split("@")[0], email };
+        localStorage.setItem("currentUser", JSON.stringify(activeUser));
+        updateProfileUI();
+
+        hideAuthModal();
+        alert("Logged in successfully! Select a seat to complete booking.");
+      } catch (err) {
+        errorBox.textContent = "Network error. Please try again.";
+        errorBox.classList.remove("hidden");
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById("regUsername").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const errorBox = document.getElementById("registerError");
+
+      try {
+        const res = await fetch("/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error || data.success === false) {
+          errorBox.textContent = data.message || data.error || "Registration failed. Try again.";
+          errorBox.classList.remove("hidden");
+          return;
+        }
+
+        activeUser = data.data || { username, email };
+        localStorage.setItem("currentUser", JSON.stringify(activeUser));
+        updateProfileUI();
+
+        hideAuthModal();
+        alert("Registered & logged in! Select a seat to complete booking.");
+      } catch (err) {
+        errorBox.textContent = "Network error. Please try again.";
+        errorBox.classList.remove("hidden");
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await fetch("/logout", {
+          method: "POST",
+          credentials: "include"
+        });
+      } catch (err) {
+        console.error("Logout error:", err);
+      }
+
+      activeUser = null;
+      localStorage.removeItem("currentUser");
+      updateProfileUI();
+      alert("Logged out successfully!");
+    }
+
+    // Close modal when clicking on the dark backdrop area outside the modal box
+    document.getElementById("authModal").addEventListener("click", function (e) {
+      if (e.target === this) hideAuthModal();
+    });
+
+    async function run() {
+      updateProfileUI();
+
+      const tbl = document.getElementById("tbl");
+      const res = await fetch("/seats");
+      const resarray = await res.json();
+      const j = resarray.sort((a, b) => a.id - b.id);
+
+      // Seats left counter initialization
+      let availableSeatsCount = j.filter(seat => !seat.isbooked).length;
+      const seatsCountEl = document.getElementById("seatsCount");
+      if (seatsCountEl) seatsCountEl.textContent = availableSeatsCount;
+
+      let tr;
+      for (let i = 0; i < j.length; i++) {
+        if (i % 8 === 0) tr = document.createElement("tr");
+
+        const td = document.createElement("td");
+
+        // Base aesthetic classes
+        const baseClasses =
+          "w-24 h-24 sm:w-20 sm:h-20 rounded-2xl text-center align-middle text-xl sm:text-2xl font-bold transition-all duration-300 select-none relative group";
+
+        if (j[i].isbooked) {
+          td.className = `${baseClasses} bg-slate-900/80 text-slate-600 border border-slate-800 cursor-not-allowed`;
+          td.innerHTML = `
+                    <span class="relative z-10 font-cinzel opacity-40">${j[i].id}</span>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
+                        Booked by: <span class="font-bold text-cyan-400 ml-1">${j[i].name}</span>
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-800"></div>
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-950"></div>
+                    </div>
+                `;
+        } else {
+          td.className = `${baseClasses} bg-gradient-to-b from-emerald-500/20 to-cyan-500/10 text-emerald-300 border-2 border-emerald-400/50 shadow-[0_0_20px_rgba(16,185,129,0.25)] cursor-pointer hover:bg-gradient-to-b hover:from-emerald-400 hover:to-cyan-400 hover:text-slate-950 hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(16,185,129,0.6)] active:scale-95`;
+          td.innerHTML = `<span class="relative z-10 font-cinzel tracking-wider">${j[i].id}</span>`;
+        }
+
+        td.addEventListener("click", async function (e) {
+          const currentTd = e.currentTarget;
+          if (currentTd.classList.contains("cursor-not-allowed")) {
+            return; // Seat is already taken
+          }
+
+          try {
+            const id = j[i].id; // Safe from loop closure
+            const bookingName = (activeUser && activeUser.username) ? activeUser.username : prompt("Enter your name");
+            if (!bookingName) return;
+
+            let res = await fetch(`/${id}/${bookingName}`, { method: "PUT", credentials: "include" });
+
+            if (res.status == 401) {
+              const refreshRes = await fetch(`/refresh-token`, { method: "POST", credentials: "include" })
+              if (refreshRes.status != 200) {
+                showAuthModal();
+                return;
+              } else {
+                res = await fetch(`/${id}/${bookingName}`, { method: "PUT", credentials: "include" });
+              }
+            }
+
+            if (!res.ok) {
+              showAuthModal();
+              return;
+            }
+
+            const data = await res.json();
+
+            if (data.error) {
+              alert("FAILED! Couldn't book: " + data.error);
+            } else {
+              alert("Seat booked successfully!");
+              // Visually transition to booked state upon success
+              currentTd.className = `${baseClasses} bg-slate-900/80 text-slate-600 border border-slate-800 cursor-not-allowed`;
+              currentTd.innerHTML = `
+                            <span class="relative z-10 font-cinzel opacity-40">${id}</span>
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal">
+                                Booked by: <span class="font-bold text-cyan-400 ml-1">${bookingName}</span>
+                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-800"></div>
+                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-950"></div>
+                            </div>
+                        `;
+
+              // Decrement seats counter in real time
+              availableSeatsCount = Math.max(0, availableSeatsCount - 1);
+              if (seatsCountEl) seatsCountEl.textContent = availableSeatsCount;
+            }
+          } catch (ex) {
+            alert("error booking " + ex);
+          }
+        });
+        tr.appendChild(td);
+        tbl.appendChild(tr);
+      }
+    }
+    run();
+  </script>
+</body>
+
+</html>
