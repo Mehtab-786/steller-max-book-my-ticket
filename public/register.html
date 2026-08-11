@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — BookMyTicket</title>
+    <meta name="description"
+        content="Create your free BookMyTicket account. Browse movies, pick your seats, and book instantly." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Ambient glow on the brand panel */
+        .brand-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, transparent 70%);
+            top: -80px;
+            left: -80px;
+            pointer-events: none;
+        }
+
+        /* Subtle film-grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Input focus ring */
+        .reg-input:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-slate-950 font-body text-slate-100 selection:bg-indigo-500 selection:text-white antialiased">
+
+    <!-- ===================== NAVBAR ===================== -->
+    <nav class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-slate-950/70 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+            <a href="/index.html" class="flex items-center gap-2.5 group" id="nav-logo">
+                <svg class="w-8 h-8 text-cyan-400 transition group-hover:text-cyan-300" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                </svg>
+                <span class="text-lg font-bold tracking-tight">
+                    <span class="text-white">Book</span><span class="text-cyan-400">My</span><span
+                        class="text-white">Ticket</span>
+                </span>
+            </a>
+        </div>
+    </nav>
+
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="min-h-screen flex pt-[68px]">
+
+        <!-- LEFT — Register Form -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+            <div class="w-full max-w-md">
+
+                <!-- Mobile-only brand badge -->
+                <div class="lg:hidden flex items-center gap-2 mb-8">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                    </svg>
+                    <span class="text-sm font-bold tracking-tight">
+                        <span class="text-white">Book</span><span class="text-cyan-400">My</span><span
+                            class="text-white">Ticket</span>
+                    </span>
+                </div>
+
+                <!-- Heading -->
+                <p class="uppercase text-xs tracking-[0.3em] text-indigo-400/80 font-semibold mb-3">Get started</p>
+                <h2 class="font-display text-3xl sm:text-4xl font-800 text-white tracking-tight mb-2">
+                    Create your account
+                </h2>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    Join in under a minute — then pick your movie and your seat.
+                </p>
+
+                <!-- Inline Error Box -->
+                <div id="registerError"
+                    class="hidden mb-5 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-medium flex items-center gap-3">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                    </svg>
+                    <span></span>
+                </div>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="space-y-5">
+                    <!-- Username -->
+                    <div>
+                        <label for="regUsername"
+                            class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">
+                            Username
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            </div>
+                            <input type="text" id="regUsername" required placeholder="johndoe"
+                                class="reg-input w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-12 pr-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all duration-200" />
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="regEmail"
+                            class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">
+                            Email Address
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                </svg>
+                            </div>
+                            <input type="email" id="regEmail" required placeholder="you@example.com"
+                                class="reg-input w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-12 pr-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all duration-200" />
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="regPassword"
+                            class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">
+                            Password
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                            </div>
+                            <input type="password" id="regPassword" required placeholder="••••••••"
+                                class="reg-input w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-12 pr-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all duration-200" />
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" id="register-submit-btn"
+                        class="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white font-bold py-4 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-500/20 active:scale-[0.98] uppercase text-xs tracking-wider flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                        </svg>
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="flex items-center gap-4 my-8">
+                    <div class="flex-1 h-px bg-slate-800"></div>
+                    <span class="text-xs text-slate-600 uppercase tracking-wider font-medium">or</span>
+                    <div class="flex-1 h-px bg-slate-800"></div>
+                </div>
+
+                <!-- Login link -->
+                <p class="text-center text-slate-400 text-sm">
+                    Already have an account?
+                    <a href="/login.html"
+                        class="text-indigo-400 hover:text-indigo-300 font-semibold transition underline underline-offset-4">
+                        Sign in instead
+                    </a>
+                </p>
+            </div>
+        </div>
+
+
+        <!-- RIGHT — Branded Cinema Panel (hidden on mobile) -->
+        <div
+            class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-bl from-slate-900 via-slate-950 to-slate-900 flex-col items-center justify-center p-16">
+            <!-- Ambient glow -->
+            <div class="brand-glow"></div>
+
+            <!-- Decorative top line -->
+            <div class="w-12 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent mb-10"></div>
+
+            <!-- Brand headline -->
+            <h1
+                class="relative z-10 font-display text-5xl xl:text-6xl font-900 leading-[1.05] tracking-tight text-center max-w-md">
+                <span class="text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-slate-500">
+                    Lights. Camera.
+                </span>
+                <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+                    Book Your Seat.
+                </span>
+            </h1>
+
+            <p class="relative z-10 mt-6 text-slate-400 text-center max-w-sm leading-relaxed">
+                One account is all it takes. Pick your film, choose your spot, and enjoy the show.
+            </p>
+
+            <!-- Steps -->
+            <div class="relative z-10 mt-12 flex flex-col gap-4 w-full max-w-xs">
+                <div class="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-400 font-display font-bold text-sm">
+                        1
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">Create your account</p>
+                        <p class="text-xs text-slate-500">Username, email &amp; password</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-lg bg-violet-500/10 text-violet-400 font-display font-bold text-sm">
+                        2
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">Browse what's showing</p>
+                        <p class="text-xs text-slate-500">4 movies playing right now</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 font-display font-bold text-sm">
+                        3
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">Pick your seat &amp; book</p>
+                        <p class="text-xs text-slate-500">Instant confirmation, no queues</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom decorative line -->
+            <div
+                class="absolute bottom-12 left-1/2 -translate-x-1/2 w-12 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent">
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ===================== EXISTING JS (untouched) ===================== -->
+    <script>
+        let activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+
+        const registerForm = document.querySelector('form');
+        const username = document.getElementById("regUsername").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value;
+        const errorBox = document.getElementById("registerError");
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const res = await fetch("/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || data.error || data.success === false) {
+                    errorBox.textContent = data.message || data.error || "Registration failed. Try again.";
+                    errorBox.classList.remove("hidden");
+                    return;
+                }
+
+                activeUser = data.data || { username, email };
+                localStorage.setItem("currentUser", JSON.stringify(activeUser));
+
+                alert("Registered & logged in! Select a seat to complete booking.");
+            } catch (err) {
+                errorBox.textContent = "Network error. Please try again.";
+                errorBox.classList.remove("hidden");
+            }
+        })
+    </script>
+</body>
+
+</html>
