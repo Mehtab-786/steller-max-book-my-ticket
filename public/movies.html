@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Movie Seats — BookMyTicket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .hero-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Cinema screen curve */
+        .screen-curve {
+            height: 12px;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0) 100%);
+            border-radius: 50% / 100% 100% 0 0;
+            box-shadow: 0 -8px 25px rgba(6, 182, 212, 0.4);
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-slate-950 font-body text-slate-100 selection:bg-cyan-500 selection:text-slate-950 antialiased flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-slate-950/70 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+            <a href="/index.html" class="flex items-center gap-2.5 group" id="nav-logo">
+                <svg class="w-8 h-8 text-cyan-400 transition group-hover:text-cyan-300" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                </svg>
+                <span class="text-lg font-bold tracking-tight">
+                    <span class="text-white">Book</span><span class="text-cyan-400">My</span><span
+                        class="text-white">Ticket</span>
+                </span>
+            </a>
+
+
+            <div class="flex items-center gap-3" id="nav-auth-container">
+                <a href="/register.html"
+                    class="text-sm font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-indigo-500 px-5 py-2 rounded-lg transition hover:from-cyan-300 hover:to-indigo-400 shadow-lg shadow-cyan-500/15"
+                    id="nav-register">
+                    Register
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative isolate pt-28 pb-16 px-6 max-w-7xl mx-auto w-full flex-grow">
+        <div class="hero-glow"></div>
+
+        <!-- Error Container -->
+        <div id="error-container"
+            class="hidden mb-8 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm text-center">
+            <h2 class="error-text font-semibold"></h2>
+            <a href="/index.html" class="inline-block mt-3 text-xs underline hover:text-rose-300">Return to Home</a>
+        </div>
+
+        <!-- Movie Header & Seat Booking Layout -->
+        <div id="booking-wrapper" class="space-y-10">
+
+            <!-- Movie Header Card -->
+            <div
+                class="bg-slate-900/60 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-md flex flex-col md:flex-row items-center gap-6 md:gap-8 shadow-2xl">
+                <!-- Movie Poster Image -->
+                <div
+                    class="relative w-36 sm:w-44 aspect-[2/3] rounded-xl overflow-hidden shadow-lg border border-white/10 flex-shrink-0 bg-slate-800">
+                    <img id="movie-poster" src="" alt="Movie Poster" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Movie Info & Stats -->
+                <div class="flex-grow text-center md:text-left space-y-4">
+                    <div>
+                        <!-- <span
+                            class="text-xs uppercase tracking-widest font-semibold text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full inline-block mb-2">Select
+                            Seats</span> -->
+                        <h1 id="movie-title"
+                            class="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight capitalize">
+                            Loading...
+                        </h1>
+                    </div>
+
+                    <p class="text-sm text-slate-400 max-w-xl">
+                        Pick your preferred seats from the layout below. Click any available seat to select or unselect.
+                    </p>
+
+                    <!-- Seats Stats Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                        <div class="bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center">
+                            <span class="text-xs text-slate-500 block uppercase font-medium">Total Seats</span>
+                            <span id="stat-total" class="text-lg font-bold text-white">--</span>
+                        </div>
+                        <div class="bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center">
+                            <span class="text-xs text-emerald-400 block uppercase font-medium">Available</span>
+                            <span id="stat-available" class="text-lg font-bold text-emerald-400">--</span>
+                        </div>
+                        <div class="bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center">
+                            <span class="text-xs text-rose-400 block uppercase font-medium">Booked</span>
+                            <span id="stat-booked" class="text-lg font-bold text-rose-400">--</span>
+                        </div>
+                        <div class="bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center">
+                            <span class="text-xs text-cyan-400 block uppercase font-medium">Selected</span>
+                            <span id="stat-selected" class="text-lg font-bold text-cyan-400">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seat Selection Area -->
+            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-6 sm:p-10 backdrop-blur-md space-y-8">
+
+                <!-- Legend -->
+                <div
+                    class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 pb-2 border-b border-white/5">
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded-md bg-slate-800 border border-slate-700"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded-md bg-emerald-500 shadow-lg shadow-emerald-500/30"></div>
+                        <span>Selected</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-5 h-5 rounded-md bg-rose-950/80 border border-rose-800 text-rose-500 flex items-center justify-center text-[10px]">
+                            ✕</div>
+                        <span>Booked</span>
+                    </div>
+                </div>
+
+                <!-- Cinema Screen -->
+                <div class="max-w-md mx-auto space-y-2 text-center">
+                    <div class="screen-curve"></div>
+                    <span class="text-[10px] uppercase tracking-[0.3em] font-semibold text-cyan-400/60">Screen This
+                        Way</span>
+                </div>
+
+                <!-- Seat Loading Spinner -->
+                <div id="seats-loading" class="py-16 text-center space-y-3">
+                    <svg class="w-8 h-8 text-cyan-400 animate-spin mx-auto" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <p class="text-xs text-slate-400">Fetching real-time seat availability...</p>
+                </div>
+
+                <!-- Seats Grid -->
+                <div id="seats-grid" class="hidden grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3 max-w-2xl mx-auto">
+                    <!-- Dynamic seats rendered via JS -->
+                </div>
+
+                <!-- Booking Feedback Alert Box -->
+                <div id="booking-alert" class="hidden p-4 rounded-xl text-sm font-medium flex items-center justify-between gap-3 border transition-all duration-300">
+                    <span id="booking-alert-msg"></span>
+                    <button type="button" id="booking-alert-close" class="text-xs opacity-70 hover:opacity-100">✕</button>
+                </div>
+
+                <!-- Booking Action Bar -->
+                <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-slate-300">
+                            Selected Seats: <span id="selected-list-text" class="text-cyan-400 font-bold">None</span>
+                        </p>
+                    </div>
+
+                    <button id="btn-book" disabled
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold text-sm uppercase tracking-wider px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20">
+                        <span id="btn-book-text">Book 0 Seat(s)</span>
+                        <svg id="btn-spinner" class="hidden w-4 h-4 text-slate-950 animate-spin" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 px-6 text-center text-xs text-slate-600">
+        &copy; 2026 BookMyTicket. All rights reserved.
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        const activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+        const authContainer = document.getElementById("nav-auth-container");
+
+        if (activeUser && authContainer) {
+            authContainer.innerHTML = `
+                <span class="text-sm text-slate-300 font-medium hidden sm:inline">Hi, <b class="text-cyan-400">${activeUser.username}</b></span>
+                <button id="nav-logout"
+                    class="text-sm font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-4 py-2 rounded-lg transition cursor-pointer">
+                    Logout
+                </button>
+            `;
+
+            document.getElementById("nav-logout")?.addEventListener("click", async () => {
+                try {
+                    await fetch("/logout", { method: "POST", credentials: "include" });
+                } catch (err) {
+                    console.error("Logout error:", err);
+                }
+                localStorage.removeItem("currentUser");
+                window.location.reload();
+            });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const movieName = params.get("name")?.trim().toLowerCase();
+
+        const movieTitleEl = document.getElementById("movie-title");
+        const moviePosterEl = document.getElementById("movie-poster");
+        const errorContainer = document.getElementById("error-container");
+        const errorText = document.querySelector(".error-text");
+        const bookingWrapper = document.getElementById("booking-wrapper");
+
+        const statTotalEl = document.getElementById("stat-total");
+        const statAvailableEl = document.getElementById("stat-available");
+        const statBookedEl = document.getElementById("stat-booked");
+        const statSelectedEl = document.getElementById("stat-selected");
+
+        const seatsLoading = document.getElementById("seats-loading");
+        const seatsGrid = document.getElementById("seats-grid");
+        const btnBook = document.getElementById("btn-book");
+        const btnBookText = document.getElementById("btn-book-text");
+        const btnSpinner = document.getElementById("btn-spinner");
+        const selectedListText = document.getElementById("selected-list-text");
+
+        const bookingAlert = document.getElementById("booking-alert");
+        const bookingAlertMsg = document.getElementById("booking-alert-msg");
+        const bookingAlertClose = document.getElementById("booking-alert-close");
+
+        bookingAlertClose?.addEventListener("click", () => {
+            bookingAlert.classList.add("hidden");
+        });
+
+        function showBookingSuccess(msg) {
+            bookingAlert.className = "p-4 rounded-xl text-sm font-medium flex items-center justify-between gap-3 border transition-all duration-300 bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
+            bookingAlertMsg.textContent = msg;
+            bookingAlert.classList.remove("hidden");
+        }
+
+        function showBookingError(msg) {
+            bookingAlert.className = "p-4 rounded-xl text-sm font-medium flex items-center justify-between gap-3 border transition-all duration-300 bg-rose-500/10 border-rose-500/30 text-rose-400";
+            bookingAlertMsg.textContent = msg;
+            bookingAlert.classList.remove("hidden");
+        }
+
+        let seatsData = [];
+        let selectedSeatIds = new Set();
+        let isBookingInProgress = false;
+
+        // Poster image mapping
+        const moviePosters = {
+            odyssey: "/images/odyssey.jpg",
+            dhurandhar: "/images/dhurandhar.jpg",
+            avengers: "/images/avengers.jpg",
+            sholay: "/images/sholay.jpg"
+        };
+
+        if (!movieName) {
+            showError("No movie specified in URL! Please choose a movie from the catalog.");
+        } else {
+            movieTitleEl.textContent = movieName;
+            moviePosterEl.src = moviePosters[movieName] || "/images/odyssey.jpg";
+            moviePosterEl.alt = `${movieName} Poster`;
+            fetchSeats();
+        }
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorContainer.classList.remove("hidden");
+            if (!movieName) bookingWrapper.classList.add("hidden");
+        }
+
+        async function fetchSeats() {
+            try {
+                seatsLoading.classList.remove("hidden");
+                seatsGrid.classList.add("hidden");
+
+                const res = await fetch(`/seats?movie=${encodeURIComponent(movieName)}`, { method: "GET" });
+                const json = await res.json();
+
+                if (!res.ok || json.success === false) {
+                    throw new Error(json.message || "Failed to load seats.");
+                }
+
+                // Handle nested structure or direct array
+                seatsData = Array.isArray(json) ? json : (json.data || []);
+                renderSeatsGrid();
+            } catch (err) {
+                console.error("Error fetching seats:", err);
+                showError(err.message || "Error loading seats.");
+            } finally {
+                seatsLoading.classList.add("hidden");
+                seatsGrid.classList.remove("hidden");
+            }
+        }
+
+        function renderSeatsGrid() {
+            seatsGrid.innerHTML = "";
+            selectedSeatIds.clear();
+            updateStatsAndButton();
+
+            let bookedCount = 0;
+            let availableCount = 0;
+
+            seatsData.forEach((seat) => {
+                const isBooked = Boolean(seat.isbooked);
+                if (isBooked) bookedCount++;
+                else availableCount++;
+
+                const seatBtn = document.createElement("button");
+                seatBtn.type = "button";
+                seatBtn.dataset.id = seat.id;
+                seatBtn.textContent = seat.id;
+
+                let classList = "w-full aspect-square rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center ";
+
+                if (isBooked) {
+                    classList += "bg-rose-950/50 border border-rose-900/60 text-rose-500/50 cursor-not-allowed";
+                    seatBtn.disabled = true;
+                    seatBtn.title = seat.name ? `Booked by ${seat.name}` : "Booked";
+                } else {
+                    classList += "bg-slate-800 border border-slate-700 text-slate-300 hover:border-cyan-400 hover:text-cyan-300 hover:scale-105 active:scale-95 cursor-pointer";
+                    seatBtn.addEventListener("click", () => toggleSeatSelection(seat.id, seatBtn));
+                }
+
+                seatBtn.className = classList;
+                seatsGrid.appendChild(seatBtn);
+            });
+
+            statTotalEl.textContent = seatsData.length;
+            statAvailableEl.textContent = availableCount;
+            statBookedEl.textContent = bookedCount;
+        }
+
+        function toggleSeatSelection(id, btnEl) {
+            if (isBookingInProgress) return;
+
+            if (selectedSeatIds.has(id)) {
+                selectedSeatIds.delete(id);
+                btnEl.className = "w-full aspect-square rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center bg-slate-800 border border-slate-700 text-slate-300 hover:border-cyan-400 hover:text-cyan-300 hover:scale-105 active:scale-95 cursor-pointer";
+            } else {
+                selectedSeatIds.add(id);
+                btnEl.className = "w-full aspect-square rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center bg-emerald-500 text-slate-950 border border-emerald-400 shadow-lg shadow-emerald-500/30 scale-105 cursor-pointer";
+            }
+
+            updateStatsAndButton();
+        }
+
+        function updateStatsAndButton() {
+            const count = selectedSeatIds.size;
+            statSelectedEl.textContent = count;
+            btnBookText.textContent = `Book ${count} Seat(s)`;
+
+            if (count > 0 && !isBookingInProgress) {
+                btnBook.disabled = false;
+                const sortedIds = Array.from(selectedSeatIds).sort((a, b) => a - b);
+                selectedListText.textContent = sortedIds.map(id => `#${id}`).join(", ");
+            } else {
+                btnBook.disabled = true;
+                selectedListText.textContent = "None";
+            }
+        }
+
+
+        async function apiCalling(url, options = {}) {
+            options.credentials = 'include';
+
+            let res = await fetch(url, options)
+
+            if (res.status == 401) {
+                try {
+                    let refreshCall = await fetch('/refresh-token', {
+                        method: "POST",
+                        credentials: "include"
+                    })
+                    if (refreshCall.ok) {
+                        res = await fetch(url, options)
+                    } else {
+                        localStorage.removeItem('currentUser')
+                        window.location.href = "/login.html";
+                        return res;
+                    }
+                } catch (error) {
+                    localStorage.removeItem("currentUser");
+                    window.location.href = "/login.html";
+                    return res;
+                }
+            }
+            return res
+        }
+
+
+        btnBook.addEventListener("click", async () => {
+            if (selectedSeatIds.size === 0 || isBookingInProgress) return;
+
+            isBookingInProgress = true;
+            btnBook.disabled = true;
+            btnBookText.textContent = "Booking...";
+            btnSpinner.classList.remove("hidden");
+            bookingAlert.classList.add("hidden");
+
+            // Disable all seat buttons during booking
+            seatsGrid.querySelectorAll("button").forEach(btn => btn.disabled = true);
+
+            const sortedIds = Array.from(selectedSeatIds).sort((a, b) => a - b);
+            let successCount = 0;
+            let errorMsg = null;
+
+            for (const seatId of sortedIds) {
+                try {
+                    const res = await apiCalling(`/seats/${encodeURIComponent(movieName)}/${seatId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" }
+                    });
+                    const json = await res.json();
+
+                    if (!res.ok || json.success === false) {
+                        if (res.status === 401) {
+                            window.location.href = "/login.html";
+                            return;
+                        }
+                        errorMsg = json.message || `Failed to book seat #${seatId}`;
+                        break;
+                    }
+                    successCount++;
+                } catch (err) {
+                    errorMsg = err.message || "Network error while booking.";
+                    break;
+                }
+            }
+
+            isBookingInProgress = false;
+            btnSpinner.classList.add("hidden");
+
+            if (errorMsg) {
+                showBookingError(`Booking Error: ${errorMsg}`);
+            } else {
+                showBookingSuccess(`Successfully booked ${successCount} seat(s)! Enjoy your show.`);
+            }
+
+            await fetchSeats();
+        });
+    </script>
+</body>
+
+</html>

@@ -72,16 +72,6 @@
                         class="text-white">Ticket</span>
                 </span>
             </a>
-            <div class="hidden sm:flex items-center gap-8 text-sm font-medium text-slate-400">
-                <a href="/index.html" class="transition hover:text-slate-200" id="nav-home">Home</a>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="/register.html"
-                    class="text-sm font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-indigo-500 px-5 py-2 rounded-lg transition hover:from-cyan-300 hover:to-indigo-400 shadow-lg shadow-cyan-500/15"
-                    id="nav-register">
-                    Register
-                </a>
-            </div>
         </div>
     </nav>
 
@@ -278,14 +268,15 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             const loginForm = document.querySelector('form');
-            const email = document.getElementById("loginEmail").value.trim();
-            const password = document.getElementById("loginPassword").value;
             const errorBox = document.getElementById("loginError");
 
             let activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+
+                const email = document.getElementById("loginEmail").value.trim();
+                const password = document.getElementById("loginPassword").value;
 
                 try {
                     const res = await fetch("/login", {
@@ -305,7 +296,7 @@
                     activeUser = data.data || { username: email.split("@")[0], email };
                     localStorage.setItem("currentUser", JSON.stringify(activeUser));
 
-                    alert("Logged in successfully! Select a seat to complete booking.");
+                    window.location.href = "index.html";
 
                 } catch (err) {
                     localStorage.removeItem("currentUser");

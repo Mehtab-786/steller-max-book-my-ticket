@@ -108,12 +108,6 @@
                 <!-- Inline Error Box -->
                 <div id="registerError"
                     class="hidden mb-5 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-medium flex items-center gap-3">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                    </svg>
-                    <span></span>
                 </div>
 
                 <!-- Register Form -->
@@ -279,13 +273,14 @@
         let activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
         const registerForm = document.querySelector('form');
-        const username = document.getElementById("regUsername").value.trim();
-        const email = document.getElementById("regEmail").value.trim();
-        const password = document.getElementById("regPassword").value;
         const errorBox = document.getElementById("registerError");
 
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const username = document.getElementById("regUsername").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const password = document.getElementById("regPassword").value;
 
             try {
                 const res = await fetch("/register", {
@@ -305,8 +300,8 @@
 
                 activeUser = data.data || { username, email };
                 localStorage.setItem("currentUser", JSON.stringify(activeUser));
+                window.location.href = "index.html";
 
-                alert("Registered & logged in! Select a seat to complete booking.");
             } catch (err) {
                 errorBox.textContent = "Network error. Please try again.";
                 errorBox.classList.remove("hidden");

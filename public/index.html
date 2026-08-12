@@ -97,19 +97,8 @@
                 </span>
             </a>
 
-            <!-- Nav links -->
-            <div class="hidden sm:flex items-center gap-8 text-sm font-medium text-slate-400">
-                <a href="/index.html" class="text-cyan-400 transition hover:text-cyan-300" id="nav-home">Home</a>
-                <a href="/movies.html" class="transition hover:text-slate-200" id="nav-movies">Movies</a>
-            </div>
-
             <!-- Auth buttons -->
-            <div class="flex items-center gap-3">
-                <a href="/login.html"
-                    class="text-sm font-semibold text-slate-300 px-4 py-2 rounded-lg transition hover:text-white hover:bg-white/5"
-                    id="nav-login">
-                    Sign in
-                </a>
+            <div class="flex items-center gap-3" id="nav-auth-container">
                 <a href="/register.html"
                     class="text-sm font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-indigo-500 px-5 py-2 rounded-lg transition hover:from-cyan-300 hover:to-indigo-400 shadow-lg shadow-cyan-500/15"
                     id="nav-register">
@@ -206,11 +195,13 @@
             <!-- Card 1 — Odyssey -->
             <div class="movie-card group relative bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-cyan-500/20 hover:shadow-2xl hover:shadow-cyan-500/5"
                 id="movie-card-1">
-                <div class="aspect-[2/3] overflow-hidden">
-                    <img src="/images/odyssey.jpg" alt="Odyssey movie poster"
-                        class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
-                        loading="lazy" />
-                </div>
+                <a href="/movies.html?name=odyssey">
+                    <div class="aspect-[2/3] overflow-hidden">
+                        <img src="/images/odyssey.jpg" alt="Odyssey movie poster"
+                            class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
+                            loading="lazy" />
+                    </div>
+                </a>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2.5">
                         <span
@@ -241,11 +232,13 @@
             <!-- Card 2 — Dhurandhar -->
             <div class="movie-card group relative bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-cyan-500/20 hover:shadow-2xl hover:shadow-cyan-500/5"
                 id="movie-card-2">
-                <div class="aspect-[2/3] overflow-hidden">
-                    <img src="/images/dhurandhar.jpg" alt="Dhurandhar movie poster"
-                        class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
-                        loading="lazy" />
-                </div>
+                <a href="/movies.html?name=dhurandhar">
+                    <div class="aspect-[2/3] overflow-hidden">
+                        <img src="/images/dhurandhar.jpg" alt="Dhurandhar movie poster"
+                            class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
+                            loading="lazy" />
+                    </div>
+                </a>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2.5">
                         <span
@@ -276,11 +269,13 @@
             <!-- Card 3 — Avengers -->
             <div class="movie-card group relative bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-cyan-500/20 hover:shadow-2xl hover:shadow-cyan-500/5"
                 id="movie-card-3">
-                <div class="aspect-[2/3] overflow-hidden">
-                    <img src="/images/avengers.jpg" alt="Avengers movie poster"
-                        class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
-                        loading="lazy" />
-                </div>
+                <a href="/movies.html?name=avengers">
+                    <div class="aspect-[2/3] overflow-hidden">
+                        <img src="/images/avengers.jpg" alt="Avengers movie poster"
+                            class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
+                            loading="lazy" />
+                    </div>
+                </a>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2.5">
                         <span
@@ -311,11 +306,13 @@
             <!-- Card 4 — Sholay -->
             <div class="movie-card group relative bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-cyan-500/20 hover:shadow-2xl hover:shadow-cyan-500/5"
                 id="movie-card-4">
-                <div class="aspect-[2/3] overflow-hidden">
-                    <img src="/images/sholay.jpg" alt="Sholay movie poster"
-                        class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
-                        loading="lazy" />
-                </div>
+                <a href="/movies.html?name=sholay">
+                    <div class="aspect-[2/3] overflow-hidden">
+                        <img src="/images/sholay.jpg" alt="Sholay movie poster"
+                            class="poster-img w-full h-full object-cover transition-transform duration-500 ease-out"
+                            loading="lazy" />
+                    </div>
+                </a>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2.5">
                         <span
@@ -359,6 +356,34 @@
         </div>
     </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const activeUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+            const authContainer = document.getElementById("nav-auth-container");
+            const ctaRegister = document.getElementById("cta-register");
+
+            if (activeUser && authContainer) {
+                if (ctaRegister) ctaRegister.classList.add("hidden");
+                authContainer.innerHTML = `
+                    <span class="text-sm text-slate-300 font-medium hidden sm:inline">Hi, <b class="text-cyan-400">${activeUser.username}</b></span>
+                    <button id="nav-logout"
+                        class="text-sm font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-4 py-2 rounded-lg transition cursor-pointer">
+                        Logout
+                    </button>
+                `;
+
+                document.getElementById("nav-logout")?.addEventListener("click", async () => {
+                    try {
+                        await fetch("/logout", { method: "POST", credentials: "include" });
+                    } catch (err) {
+                        console.error("Logout error:", err);
+                    }
+                    localStorage.removeItem("currentUser");
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
