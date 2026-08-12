@@ -13,7 +13,7 @@ app.use(express.static('public'));
 // built-in middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: 'https://stellar.mehtabhussain.tech/', credentials: true }));
 app.use(cookieParser())
 
 
